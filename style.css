@@ -1,0 +1,677 @@
+/* ================================================================= *
+ * Variables Globales y Configuración Base
+ * ================================================================= */
+ :root {
+    --bg: #f4f6f5;
+    --card: #fff;
+    --tx: #12201a;
+    --mu: #5b6b63;
+    --br: #d9e0dc;
+    --pr: #0b6e4f;
+    --ac: #e8f3ee;
+    --rd: #c62828;
+    --or: #ef6c00;
+    --yl: #f9a825;
+    --gn: #2e7d32;
+    --wt: #cfe6f5;
+    --ld: #e9efe4;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #0f1613;
+        --card: #18221d;
+        --tx: #e6efe9;
+        --mu: #9bb0a5;
+        --br: #2b3a33;
+        --pr: #3ecf9a;
+        --ac: #1d2f27;
+        --wt: #17323f;
+        --ld: #1b261f;
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    --bg: #0f1613;
+    --card: #18221d;
+    --tx: #e6efe9;
+    --mu: #9bb0a5;
+    --br: #2b3a33;
+    --pr: #3ecf9a;
+    --ac: #1d2f27;
+    --wt: #17323f;
+    --ld: #1b261f;
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--tx);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    padding-bottom: 100px;
+    -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: #0b6e4f;
+    z-index: 6;
+}
+
+/* ================================================================= *
+ * Componentes de Estructura (Header y Main)
+ * ================================================================= */
+header {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 5;
+    background: linear-gradient(135deg, #0b6e4f, #0a5a78);
+    color: #fff;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 0 0 22px 22px;
+    box-shadow: 0 6px 20px rgba(10, 90, 120, .25);
+}
+
+header h1 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -.2px;
+    line-height: 1.15;
+    margin: 0;
+    flex: 1;
+}
+
+header small {
+    display: block;
+    font-weight: 500;
+    opacity: .85;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .18);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+}
+
+.pill {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, .2);
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.pill[data-off="1"] {
+    background: #ef6c00;
+}
+
+main {
+    max-width: 980px;
+    margin: auto;
+    padding: 16px 14px;
+}
+
+/* ================================================================= *
+ * Tarjetas y Contenedores
+ * ================================================================= */
+.card {
+    background: var(--card);
+    border: 1px solid var(--br);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .05);
+}
+
+h2 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -.2px;
+    margin: 0 0 8px;
+}
+
+h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--mu);
+    margin: 10px 0 6px;
+}
+
+/* ================================================================= *
+ * Formularios y Controles
+ * ================================================================= */
+label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--mu);
+    margin: 12px 0 5px;
+}
+
+input, select, textarea {
+    font: inherit;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1.5px solid var(--br);
+    background: var(--bg);
+    color: var(--tx);
+    font-size: 16px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: 0;
+    border-color: var(--pr);
+    box-shadow: 0 0 0 4px rgba(11, 110, 79, .18);
+}
+
+button.b {
+    font: inherit;
+    background: #0b6e4f;
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    width: auto;
+    padding: 12px 18px;
+    font-size: 15px;
+    min-height: 44px;
+    transition: transform .1s, filter .15s;
+}
+
+button.b:hover {
+    filter: brightness(1.08);
+}
+
+button.b:active {
+    transform: scale(.97);
+}
+
+button.b.s {
+    background: var(--ac);
+    color: var(--pr);
+}
+
+button.b.d {
+    background: var(--rd);
+    color: #fff;
+}
+
+#send, #ab {
+    width: 100%;
+    min-height: 50px;
+    font-size: 16px;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.row > * {
+    flex: 1;
+}
+
+.row > button.b {
+    flex: 1;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+/* ================================================================= *
+ * Estilos para el Mapa Leaflet
+ * ================================================================= */
+.map {
+    width: 100%;
+    height: 420px; /* Altura obligatoria para mapas Leaflet */
+    border-radius: 16px;
+    border: 1px solid var(--br);
+    z-index: 1;
+    margin-bottom: 10px;
+}
+
+.tag {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 99px;
+    color: #fff;
+}
+
+.bar {
+    height: 10px;
+    background: var(--br);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.bar i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    transition: width .4s ease;
+}
+
+.item {
+    padding: 12px 0;
+    border-top: 1px solid var(--br);
+}
+
+.item:first-child {
+    border-top: 0;
+}
+
+.mu {
+    color: var(--mu);
+    font-size: 13px;
+}
+
+.kpi {
+    display: flex;
+    gap: 8px;
+}
+
+.kpi div {
+    flex: 1;
+    background: var(--ac);
+    border-radius: 16px;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mu);
+    font-weight: 600;
+}
+
+.kpi b {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--tx);
+    display: block;
+}
+
+.leg {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    margin: 2px 0 12px;
+}
+
+.leg label {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    align-items: center;
+    color: var(--tx);
+    background: var(--bg);
+    border: 1.5px solid var(--br);
+    border-radius: 99px;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+}
+
+.leg label:has(input:checked) {
+    background: var(--ac);
+    border-color: var(--pr);
+    color: var(--pr);
+}
+
+.leg input {
+    display: none;
+}
+
+.ban {
+    background: var(--rd);
+    color: #fff;
+    border-radius: 16px;
+    padding: 14px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: none;
+    box-shadow: 0 8px 24px rgba(198, 40, 40, .35);
+    animation: pu 2s infinite;
+}
+
+@keyframes pu {
+    50% { box-shadow: 0 8px 32px rgba(198, 40, 40, .6); }
+}
+
+.pan {
+    display: none;
+}
+
+.pan.on {
+    display: block;
+    animation: fi .25s ease;
+}
+
+@keyframes fi {
+    from { opacity: 0; transform: translateY(6px); }
+}
+
+img.th {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* ================================================================= *
+ * Hero y Acciones Rápidas
+ * ================================================================= */
+.hero {
+    background: linear-gradient(135deg, #0b6e4f, #0a5a78);
+    color: #fff;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 10px 28px rgba(10, 90, 120, .28);
+}
+
+.hero h2 {
+    color: #fff;
+    font-size: 21px;
+    margin: 0;
+}
+
+.hero p {
+    margin: 4px 0 14px;
+    opacity: .9;
+    font-size: 14px;
+}
+
+.qa {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 8px;
+}
+
+.qa button, .qa a {
+    border: 0;
+    border-radius: 14px;
+    padding: 12px 6px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 13.5px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, .18);
+    color: #fff;
+    min-height: 48px;
+    display: grid;
+    place-items: center;
+}
+
+.qa .sos {
+    background: #fff;
+    color: #c62828;
+    font-size: 15px;
+}
+
+.qa button:active, .qa a:active {
+    transform: scale(.97);
+}
+
+/* ================================================================= *
+ * Navegación Flotante Inferior
+ * ================================================================= */
+nav {
+    position: fixed;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    right: 12px;
+    display: flex;
+    background: var(--card);
+    border-top: 1px solid var(--br);
+    padding: 6px;
+    border-radius: 22px;
+    border: 1px solid var(--br);
+    gap: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+    z-index: 5;
+}
+
+nav button {
+    flex: 1;
+    border: 0;
+    background: none;
+    color: var(--mu);
+    padding: 8px 2px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 16px;
+    transition: background .2s, color .2s;
+}
+
+nav button.on {
+    background: var(--ac);
+    color: var(--pr);
+    font-weight: 700;
+    box-shadow: none;
+}
+
+nav span {
+    display: block;
+    font-size: 21px;
+    line-height: 1.2;
+}
+
+/* ================================================================= *
+ * Media Queries y Accesibilidad
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+@media (min-width: 760px) {
+    nav {
+        left: 50%;
+        right: auto;
+        width: 440px;
+        transform: translateX(-50%);
+    }
+}
+/* ================================================================= *
+ * LOGIN
+ * ================================================================= */
+ /* ================================================================= *
+ * Estilos para la Pantalla de Login
+ * ================================================================= */
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card);
+    border: 1px solid var(--br);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .12);
+    text-align: center;
+}
+
+.login-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: var(--ac);
+    color: var(--pr);
+    display: grid;
+    place-items: center;
+    font-size: 30px;
+    margin: 0 auto 16px;
+}
+
+.login-card h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--tx);
+}
+
+.login-card p {
+    color: var(--mu);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.login-card .form-group {
+    text-align: left;
+    margin-bottom: 14px;
+}
+
+.login-card button.b {
+    width: 100%;
+    margin-top: 10px;
+    min-height: 48px;
+    font-size: 16px;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, .15);
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.user-badge button {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.8;
+}
+.user-badge button:hover {
+    opacity: 1;
+}
+/* ================================================================= *
+ * Estilos Profesionales para el Módulo de Reportes
+ * ================================================================= */
+.report-card {
+    background: var(--card);
+    border: 1px solid var(--br);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+
+.camera-upload-box {
+    border: 2px dashed var(--br);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.camera-upload-box:hover {
+    border-color: var(--pr);
+    background: var(--ac);
+}
+
+.camera-upload-box input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.camera-icon-wrapper {
+    font-size: 32px;
+    margin-bottom: 6px;
+}
+
+.preview-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
+}
+
+img.report-preview-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid var(--pr);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.report-history-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid var(--br);
+}
+
+.report-history-item:first-child {
+    border-top: 0;
+}

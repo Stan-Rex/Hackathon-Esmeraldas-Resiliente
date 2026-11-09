@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b6e4f">
+    <title>Esmeraldas Resiliente</title>
+    
+    <!-- Fuentes y Estilos -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Pantalla de Login -->
+    <div id="login-screen" class="login-overlay" style="display: none;">
+        <div class="login-card">
+            <div class="login-logo">🛟</div>
+            <h2>Esmeraldas Resiliente</h2>
+            <p>Ingresa tus credenciales para acceder</p>
+            <div class="form-group">
+                <label>Correo electrónico o Usuario</label>
+                <input type="text" id="login-user" placeholder="ej. usuario@esmeraldas.gob.ec">
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="login-pass" placeholder="••••••••">
+            </div>
+            <button class="b" id="login-btn">Iniciar Sesión</button>
+        </div>
+    </div>
+
+    <header>
+        <span class="logo">🛟</span>
+        <h1>Esmeraldas Resiliente<small>Gestión de riesgos y emergencias · prototipo</small></h1>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div id="user-info-container"></div>
+            <button class="pill" id="net" title="Toca para simular pérdida de señal"></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="ban" id="ban"></div>
+        <section class="pan on" id="p-map"></section>
+        <section class="pan" id="p-rep"></section>
+        <section class="pan" id="p-coe"></section>
+        <section class="pan" id="p-ia"></section>
+    </main>
+
+    <nav id="nav"></nav>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Script Principal -->
+    <script src="script.js"></script>
+</body>
+</html>
