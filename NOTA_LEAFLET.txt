@@ -1,0 +1,7 @@
+EN EL CODIGO DE LEAFLET HACER UN FETCH CON EL SIGUIENTE CODIGO:
+
+fetch('http://localhost:3000/api/maps/shelters')
+  .then(response => response.json())
+  .then(data => {
+    L.geoJSON(data).addTo(map); // Leaflet lee y pinta el GeoJSON automáticamente
+  });
