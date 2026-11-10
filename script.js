@@ -7,50 +7,35 @@ const TABS = [["map", "🗺️", "Mapa"], ["rep", "📸", "Reportar"], ["coe", "
 const ESMERALDAS_CENTER = [0.9686, -79.6517];
 
 // Zonas convertidas a formato GeoJSON (Polígonos 4326 listos para PostGIS)
-const ZONES_GEOJSON = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": { "id": 1, "n": "Las Palmas", "v": 0.9, "t": "Inundación / tsunami", "riskLevel": "Alto" },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[-79.72, 1.01], [-79.68, 1.01], [-79.68, 0.98], [-79.72, 0.98], [-79.72, 1.01]]]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": { "id": 2, "n": "Isla Piedad", "v": 0.85, "t": "Desborde del río", "riskLevel": "Alto" },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[-79.68, 0.99], [-79.65, 0.99], [-79.65, 0.96], [-79.68, 0.96], [-79.68, 0.99]]]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": { "id": 3, "n": "Barrio 5 de Agosto", "v": 0.7, "t": "Inundación pluvial", "riskLevel": "Medio" },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[-79.66, 0.97], [-79.63, 0.97], [-79.63, 0.94], [-79.66, 0.94], [-79.66, 0.97]]]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": { "id": 4, "n": "Codesa", "v": 0.55, "t": "Deslizamiento", "riskLevel": "Medio" },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[-79.64, 0.95], [-79.61, 0.95], [-79.61, 0.92], [-79.64, 0.92], [-79.64, 0.95]]]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": { "id": 5, "n": "Tachina (rural)", "v": 0.5, "t": "Vía y crecida rural", "riskLevel": "Bajo" },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[-79.62, 1.00], [-79.58, 1.00], [-79.58, 0.96], [-79.62, 0.96], [-79.62, 1.00]]]
-            }
-        }
-    ]
+const ZONES_PINS_GEOJSON = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "id": 1, "n": "Las Palmas", "v": 0.9, "t": "Inundación / tsunami", "riskLevel": "Alto" },
+      "geometry": { "type": "Point", "coordinates": [-79.7000, 0.9950] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": 2, "n": "Isla Piedad", "v": 0.85, "t": "Desborde del río", "riskLevel": "Alto" },
+      "geometry": { "type": "Point", "coordinates": [-79.6650, 0.9750] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": 3, "n": "Barrio 5 de Agosto", "v": 0.7, "t": "Inundación pluvial", "riskLevel": "Medio" },
+      "geometry": { "type": "Point", "coordinates": [-79.6450, 0.9550] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": 4, "n": "Codesa", "v": 0.55, "t": "Deslizamiento", "riskLevel": "Medio" },
+      "geometry": { "type": "Point", "coordinates": [-79.6250, 0.9350] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": 5, "n": "Tachina (rural)", "v": 0.5, "t": "Vía y crecida rural", "riskLevel": "Bajo" },
+      "geometry": { "type": "Point", "coordinates": [-79.6000, 0.9800] }
+    }
+  ]
 };
 
 let SH0 = [
