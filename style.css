@@ -521,17 +521,85 @@ nav span {
 /* ================================================================= *
  * LOGIN
  * ================================================================= */
- /* ================================================================= *
- * Estilos para la Pantalla de Login
+
+/* ================================================================= *
+ * Estilos para la Pantalla de Login con Imagen de Fondo
  * ================================================================= */
 .login-overlay {
     position: fixed;
     inset: 0;
-    background: var(--bg);
-    z-index: 100;
+    z-index: 9999;
     display: grid;
     place-items: center;
     padding: 16px;
+    
+    /* Configuración de la imagen de fondo usando la ruta correcta */
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)),
+        url('images/fondo.jpeg'); 
+        
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+    /* Transición de desvanecimiento suave */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.login-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+/* Ocultar completamente cuando se inicia sesión */
+.login-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Tarjeta contenedora centrada */
+.login-card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    border: 1px solid var(--br);
+    border-radius: 28px;
+    padding: 38px 36px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+    text-align: center;
+    
+    /* Animación de entrada al abrir */
+    animation: loginEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes loginEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Mejora visual opcional para que la tarjeta resalte sobre la imagen */
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card);
+    border: 1px solid var(--br);
+    border-radius: 24px;
+    padding: 28px 24px;
+    /* Sombra más pronunciada e insignificante efecto de desenfoque de fondo */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    text-align: center;
 }
 
 .login-card {
@@ -545,16 +613,21 @@ nav span {
     text-align: center;
 }
 
+/* Contenedor del Logo */
 .login-logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-    background: var(--ac);
-    color: var(--pr);
-    display: grid;
-    place-items: center;
-    font-size: 30px;
-    margin: 0 auto 16px;
+    width: 90px;             /* Ajusta el ancho deseado */
+    height: 90px;            /* Ajusta la altura deseada */
+    margin: 0 auto 16px;     /* Centra el contenedor y da espacio inferior */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilo para ajustar la imagen dentro del contenedor */
+.login-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;     /* Mantiene la proporción del logo sin deformarlo */
 }
 
 .login-card h2 {
@@ -674,4 +747,67 @@ img.report-preview-img {
 
 .report-history-item:first-child {
     border-top: 0;
+}
+
+/* ================================================================= *
+ * Transiciones y Pantalla de Autenticación
+ * ================================================================= */
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)),
+        url('fondo.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+    /* Transición suave para cuando se oculte */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Clase que se activa al iniciar sesión para desvanecer la pantalla completa */
+.login-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card);
+    border: 1px solid var(--br);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    text-align: center;
+    
+    /* Animación de entrada al abrir la página (Aparición con escala y deslizamiento) */
+    animation: loginEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes loginEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(35px) scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Efecto de salida sutil en la tarjeta cuando se oculta */
+.login-overlay.hidden .login-card {
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.4s ease, opacity 0.4s ease;
 }

@@ -8,32 +8,45 @@
     
     <!-- Fuentes y Estilos -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Pantalla de Login -->
-    <div id="login-screen" class="login-overlay" style="display: none;">
-        <div class="login-card">
-            <div class="login-logo">🛟</div>
-            <h2>Esmeraldas Resiliente</h2>
-            <p>Ingresa tus credenciales para acceder</p>
-            <div class="form-group">
-                <label>Correo electrónico o Usuario</label>
-                <input type="text" id="login-user" placeholder="ej. usuario@esmeraldas.gob.ec">
+    <!-- Pantalla de Autenticación / Login Overlay -->
+    <!-- Pantalla de Autenticación / Login Overlay -->
+<div id="login-screen" class="login-overlay">
+    <div class="login-card">
+        
+       
+        <div class="login-logo">
+            <img src="images/logo.png" alt="Logo Esmeraldas Resiliente">
+        </div>
+
+        <h2>Esmeraldas Resiliente</h2>
+        <p>Ingresa tus credenciales para acceder</p>
+            <form id="login-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="login-user">Usuario o Correo</label>
+                    <input type="text" id="login-user" placeholder="ej. usuario o admin" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="login-pass">Contraseña</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <div id="login-error" class="mu" style="color: var(--rd); font-weight: 600; display: none; margin-bottom: 10px;"></div>
+                <button class="b" id="login-btn" type="submit">Iniciar Sesión</button>
+            </form>
+            <div class="mu" style="margin-top: 15px; font-size: 11.5px; text-align: left; background: var(--bg); padding: 8px 12px; border-radius: 8px;">
+                💡 <b>Credenciales demo:</b><br>
+                • <b>Usuario:</b> <code>usuario</code> / <code>1234</code> (Mapa y Reportes)<br>
+                • <b>Admin:</b> <code>admin</code> / <code>admin123</code> (Acceso Total)
             </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" id="login-pass" placeholder="••••••••">
-            </div>
-            <button class="b" id="login-btn">Iniciar Sesión</button>
         </div>
     </div>
 
+    <!-- Aplicación Principal -->
     <header>
         <span class="logo">🛟</span>
         <h1>Esmeraldas Resiliente<small>Gestión de riesgos y emergencias · prototipo</small></h1>
@@ -55,7 +68,6 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    
     <!-- Script Principal -->
     <script src="script.js"></script>
 </body>
