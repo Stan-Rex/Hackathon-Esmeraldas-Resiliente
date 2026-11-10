@@ -1,0 +1,9 @@
+fecha_hora,zona,tipo_incidente,prioridad_estimada
+2026-11-09 20:46:18,Esmeraldas Centro,Inundacion,Alta
+2026-11-09 20:49:05,Esmeraldas Centro,Inundacion,Alta
+2026-11-09 20:53:45,Esmeraldas Centro,Incendio,Alta
+2026-11-09 20:53:54,Atacames,Incendio,Baja
+2026-11-09 20:56:48,Las Palmas,Incendio,Media
+2026-11-09 21:03:13,Rioverde,Inundacion,Alta
+2026-11-09 21:08:32,Tachina,Deslizamiento,Alta
+2026-11-09 22:06:03,Atacames,Deslizamiento,Media
