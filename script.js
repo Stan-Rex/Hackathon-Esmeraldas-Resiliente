@@ -7,7 +7,8 @@ const TABS = [["map", "🗺️", "Mapa"], ["rep", "📸", "Reportar"], ["coe", "
 const ESMERALDAS_CENTER = [0.9686, -79.6517];
 
 // Zonas convertidas a formato GeoJSON (Polígonos 4326 listos para PostGIS)
-const ZONES_PINS_GEOJSON = {
+// 1. Zonas en formato GeoJSON de puntos centrados [longitud, latitud]
+const ZONES_GEOJSON = {
   "type": "FeatureCollection",
   "features": [
     {
@@ -162,16 +163,21 @@ const rc = p => p >= 70 ? "#c62828" : p >= 40 ? "#ef6c00" : p >= 20 ? "#f9a825" 
 
 /* ---- Lógica de IA y Riesgos ---- */
 function zoneAt(lo, la) {
-    let b = ZONES_GEOJSON.features[0].properties, d = 1e9;
-    ZONES_GEOJSON.features.forEach(f => {
-        // Cálculo aproximado basado en el centroide del feature
-        const coords = f.geometry.coordinates[0];
-        const cx = (coords[0][0] + coords[2][0]) / 2;
-        const cy = (coords[0][1] + coords[2][1]) / 2;
-        const k = (cx - lo) ** 2 + (cy - la) ** 2;
-        if (k < d) { d = k; b = f.properties; }
-    });
-    return b;
+  let b = ZONES_GEOJSON.features[0].properties, d = 1e9;
+  ZONES_GEOJSON.features.forEach(f => {
+    let cx, cy;
+    if (f.geometry.type === "Point") {
+      cx = f.geometry.coordinates[0];
+      cy = f.geometry.coordinates[1];
+    } else {
+      const coords = f.geometry.coordinates[0];
+      cx = (coords[0][0] + coords[2][0]) / 2;
+      cy = (coords[0][1] + coords[2][1]) / 2;
+    }
+    const k = (cx - lo) ** 2 + (cy - la) ** 2;
+    if (k < d) { d = k; b = f.properties; }
+  });
+  return b;
 }
 
 function score(r) {
@@ -200,120 +206,133 @@ function getSemaphoreColor(val) {
 
 /* ---- Mapa ---- */
 function viewMap(customRisks) {
-    if (mapInstance) {
-        const infoText = $("#map-coords-info");
-        if (infoText) {
-            infoText.textContent = `Haz clic en el mapa para fijar la ubicación de un reporte${S.pick ? " · fijada: " + S.pick.la.toFixed(4) + ", " + S.pick.lo.toFixed(4) : ""}.`;
-        }
-        
-        if (window.tempPickMarker) {
-            mapInstance.removeLayer(window.tempPickMarker);
-        }
-        if (S.pick) {
-            window.tempPickMarker = L.marker([S.pick.la, S.pick.lo], {
-                icon: L.divIcon({ className: 'custom-pin', html: '📍', iconSize: [24, 24] })
-            }).addTo(mapInstance);
-        }
-        return;
+  // Limpieza preventiva: si el contenedor se regenera en el DOM, destruir la instancia anterior
+  if (mapInstance) {
+    const el = document.getElementById('leaflet-map');
+    if (!el || !el._leaflet_id) {
+      mapInstance.remove();
+      mapInstance = null;
+    } else {
+      const infoText = $("#map-coords-info");
+      if (infoText) {
+        infoText.textContent = `Haz clic en el mapa para fijar la ubicación de un reporte${S.pick ? " · fijada: " + S.pick.la.toFixed(4) + ", " + S.pick.lo.toFixed(4) : ""}.`;
+      }
+      if (window.tempPickMarker) mapInstance.removeLayer(window.tempPickMarker);
+      if (S.pick) {
+        window.tempPickMarker = L.marker([S.pick.la, S.pick.lo], {
+          icon: L.divIcon({ className: 'custom-pin', html: '📍', iconSize: [24, 24] })
+        }).addTo(mapInstance);
+      }
+      return;
     }
+  }
 
-    $("#p-map").innerHTML = `
-        <div class="hero">
-            <h2>¿Hay una emergencia?</h2>
-            <p>Repórtala en segundos, incluso sin señal.</p>
-            <div class="qa">
-                <button class="sos" onclick="go('rep')">📸 Reportar ahora</button>
-                <a href="tel:911">📞 911</a>
-                <button onclick="go('coe')">🏠 Albergues</button>
-            </div>
-        </div>
-        <div class="card">
-            <h2>Mapa de riesgo (OpenStreetMap + PostGIS GeoJSON)</h2>
-            <div id="leaflet-map" class="map"></div>
-            <p class="mu" id="map-coords-info">Haz clic en el mapa para fijar la ubicación de un reporte${S.pick ? " · fijada: " + S.pick.la.toFixed(4) + ", " + S.pick.lo.toFixed(4) : ""}.</p>
-        </div>
-        
-        <!-- APARTADO MOVIDO: Monitoreo Oficial (INAMHI y SNGR) -->
-        <div class="card">
-            <h2>Monitoreo Oficial (INAMHI y SNGR)</h2>
-            <div class="item">
-                <span class="tag" style="background:#1e88e5">INAMHI</span> <b>Advertencia Meteorológica N° 34 (Lluvias)</b>
-                <div class="mu">Se pronostican precipitaciones de variable intensidad con tormentas eléctricas en la región Litoral, afectando de manera directa a la provincia de Esmeraldas. Vigente 48 horas.</div>
-            </div>
-            <div class="item">
-                <span class="tag" style="background:#ef6c00">SNGR</span> <b>Estado de Alerta Naranja Activa</b>
-                <div class="mu">Resolución institucional de monitoreo permanente por incremento del caudal en los ríos Esmeraldas y Teaone. Se recomienda activar los protocolos preventivos en zonas bajas.</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>Zonas vulnerables analizadas</h3>
-            ${ZONES_GEOJSON.features.map((f, i) => {
-                const rVal = customRisks ? customRisks[i] : Math.round(f.properties.v * 100);
-                return `<div class="item"><b>${f.properties.n}</b> <span class="mu">· ${f.properties.t}</span><div class="bar"><i style="width:${rVal}%;background:${rc(rVal)}"></i></div></div>`;
-            }).join("")}
-        </div>`;
-
-    mapInstance = L.map('leaflet-map').setView(ESMERALDAS_CENTER, 12);
+  $("#p-map").innerHTML = `
+    <div class="hero">
+      <h2>¿Hay una emergencia?</h2>
+      <p>Repórtala en segundos, incluso sin señal.</p>
+      <div class="qa">
+        <button class="sos" onclick="go('rep')">📸 Reportar ahora</button>
+        <a href="tel:911">📞 911</a>
+        <button onclick="go('coe')">🏠 Albergues</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Mapa de riesgo (OpenStreetMap + PostGIS GeoJSON)</h2>
+      <div id="leaflet-map" class="map" style="height: 380px; width: 100%;"></div>
+      <p class="mu" id="map-coords-info">Haz clic en el mapa para fijar la ubicación de un reporte${S.pick ? " · fijada: " + S.pick.la.toFixed(4) + ", " + S.pick.lo.toFixed(4) : ""}.</p>
+    </div>
     
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mapInstance);
+    <div class="card">
+      <h2>Monitoreo Oficial (INAMHI y SNGR)</h2>
+      <div class="item">
+        <span class="tag" style="background:#1e88e5">INAMHI</span> <b>Advertencia Meteorológica N° 34 (Lluvias)</b>
+        <div class="mu">Se pronostican precipitaciones de variable intensidad con tormentas eléctricas en la región Litoral, afectando de manera directa a la provincia de Esmeraldas. Vigente 48 horas.</div>
+      </div>
+      <div class="item">
+        <span class="tag" style="background:#ef6c00">SNGR</span> <b>Estado de Alerta Naranja Activa</b>
+        <div class="mu">Resolución institucional de monitoreo permanente por incremento del caudal en los ríos Esmeraldas y Teaone. Se recomienda activar los protocolos preventivos en zonas bajas.</div>
+      </div>
+    </div>
 
-    geoJsonLayer = L.geoJSON(ZONES_GEOJSON, {
-        style: function (feature) {
-            const index = ZONES_GEOJSON.features.indexOf(feature);
-            const riskVal = customRisks ? customRisks[index] : Math.round(feature.properties.v * 100);
-            const color = getSemaphoreColor(riskVal);
-            return { color: color, weight: 2, fillColor: color, fillOpacity: 0.4 };
-        },
-        onEachFeature: function (feature, layer) {
-            const index = ZONES_GEOJSON.features.indexOf(feature);
-            const riskVal = customRisks ? customRisks[index] : Math.round(feature.properties.v * 100);
-            layer.bindPopup(`<b>${feature.properties.n}</b><br>Tipo: ${feature.properties.t}<br>Riesgo: <b>${riskVal}%</b>`);
-        }
-    }).addTo(mapInstance);
+    <div class="card">
+      <h3>Zonas vulnerables analizadas</h3>
+      ${ZONES_GEOJSON.features.map((f, i) => {
+        const rVal = customRisks ? customRisks[i] : Math.round(f.properties.v * 100);
+        return `<div class="item"><b>${f.properties.n}</b> <span class="mu">· ${f.properties.t}</span><div class="bar"><i style="width:${rVal}%;background:${rc(rVal)}"></i></div></div>`;
+      }).join("")}
+    </div>`;
 
-    const blueShelterIcon = L.divIcon({
-        className: 'custom-shelter-icon',
-        html: '<div style="background-color: #1e88e5; color: white; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-size: 14px;">🏠</div>',
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
-    });
+  mapInstance = L.map('leaflet-map').setView(ESMERALDAS_CENTER, 12);
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(mapInstance);
 
-    S.shelters.forEach(a => {
-        L.marker([a.la, a.lo], { icon: blueShelterIcon }).addTo(mapInstance).bindPopup(`🏠 <b>${a.n}</b><br>Capacidad: ${a.occ}/${a.cap}`);
-    });
+  // Renderizar puntos GeoJSON con pointToLayer para dibujar círculos coloreados
+  geoJsonLayer = L.geoJSON(ZONES_GEOJSON, {
+    pointToLayer: function (feature, latlng) {
+      const index = ZONES_GEOJSON.features.indexOf(feature);
+      const riskVal = customRisks ? customRisks[index] : Math.round(feature.properties.v * 100);
+      const color = getSemaphoreColor(riskVal);
 
-    S.reports.forEach(r => {
-        L.circleMarker([r.la, r.lo], {
-            radius: 8, fillColor: rc(score(r)), color: "#fff", weight: 2, fillOpacity: 0.9
-        }).addTo(mapInstance).bindPopup(`<b>Reporte:</b> ${TYPES[r.type]}<br>${esc(r.desc || "")}`);
-    });
-
-    if (S.pick) {
-        window.tempPickMarker = L.marker([S.pick.la, S.pick.lo], {
-            icon: L.divIcon({ className: 'custom-pin', html: '📍', iconSize: [24, 24] })
-        }).addTo(mapInstance);
+      return L.circleMarker(latlng, {
+        radius: 10,
+        fillColor: color,
+        color: "#ffffff",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.85
+      });
+    },
+    onEachFeature: function (feature, layer) {
+      const index = ZONES_GEOJSON.features.indexOf(feature);
+      const riskVal = customRisks ? customRisks[index] : Math.round(feature.properties.v * 100);
+      layer.bindPopup(`<b>${feature.properties.n}</b><br>Tipo: ${feature.properties.t}<br>Riesgo: <b>${riskVal}%</b>`);
     }
+  }).addTo(mapInstance);
 
-    mapInstance.on('click', function(e) {
-        S.pick = { lo: e.latlng.lng, la: e.latlng.lat };
-        save();
-        
-        if (window.tempPickMarker) {
-            mapInstance.removeLayer(window.tempPickMarker);
-        }
-        window.tempPickMarker = L.marker([S.pick.la, S.pick.lo], {
-            icon: L.divIcon({ className: 'custom-pin', html: '📍', iconSize: [24, 24] })
-        }).addTo(mapInstance);
+  const blueShelterIcon = L.divIcon({
+    className: 'custom-shelter-icon',
+    html: '<div style="background-color: #1e88e5; color: white; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-size: 14px;">🏠</div>',
+    iconSize: [28, 28],
+    iconAnchor: [14, 14]
+  });
 
-        const infoText = $("#map-coords-info");
-        if (infoText) {
-            infoText.textContent = `Haz clic en el mapa para fijar la ubicación de un reporte · fijada: ${S.pick.la.toFixed(4)}, ${S.pick.lo.toFixed(4)}.`;
-        }
-    });
+  S.shelters.forEach(a => {
+    L.marker([a.la, a.lo], { icon: blueShelterIcon }).addTo(mapInstance).bindPopup(`🏠 <b>${a.n}</b><br>Capacidad: ${a.occ}/${a.cap}`);
+  });
+
+  S.reports.forEach(r => {
+    L.circleMarker([r.la, r.lo], {
+      radius: 8, fillColor: rc(score(r)), color: "#fff", weight: 2, fillOpacity: 0.9
+    }).addTo(mapInstance).bindPopup(`<b>Reporte:</b> ${TYPES[r.type]}<br>${esc(r.desc || "")}`);
+  });
+
+  if (S.pick) {
+    window.tempPickMarker = L.marker([S.pick.la, S.pick.lo], {
+      icon: L.divIcon({ className: 'custom-pin', html: '📍', iconSize: [24, 24] })
+    }).addTo(mapInstance);
+  }
+
+  mapInstance.on('click', function(e) {
+    S.pick = { lo: e.latlng.lng, la: e.latlng.lat };
+    save();
+    
+    if (window.tempPickMarker) mapInstance.removeLayer(window.tempPickMarker);
+    window.tempPickMarker = L.marker([S.pick.la, S.pick.lo], {
+      icon: L.divIcon({ className: 'custom-pin', html: '📍', iconSize: [24, 24] })
+    }).addTo(mapInstance);
+
+    const infoText = $("#map-coords-info");
+    if (infoText) {
+      infoText.textContent = `Haz clic en el mapa para fijar la ubicación de un reporte · fijada: ${S.pick.la.toFixed(4)}, ${S.pick.lo.toFixed(4)}.`;
+    }
+  });
+
+  // Asegura el cálculo de dimensiones si la pestaña estaba oculta
+  setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
 }
 /* ---- Reportes ---- */
 let photo2 = null;
