@@ -1,0 +1,16 @@
+id,zona,tipo_incidente,nivel_prioridad,estado
+1,Esmeraldas Centro,Inundacion,Alta,Abierto
+2,Las Palmas,Deslizamiento,Media,Abierto
+3,Tachina,Inundacion,Alta,En proceso
+4,Esmeraldas Centro,Incendio,Alta,Abierto
+5,Atacames,Inundacion,Baja,Cerrado
+6,Rioverde,Deslizamiento,Alta,Abierto
+7,Las Palmas,Incendio,Media,En proceso
+8,Tachina,Inundacion,Alta,Abierto
+9,Atacames,Deslizamiento,Media,Cerrado
+10,Rioverde,Inundacion,Alta,Abierto
+11,Esmeraldas Centro,Inundacion,Media,En proceso
+12,Las Palmas,Deslizamiento,Alta,Abierto
+13,Tachina,Incendio,Baja,Cerrado
+14,Atacames,Inundacion,Media,Abierto
+15,Rioverde,Deslizamiento,Alta,En proceso
